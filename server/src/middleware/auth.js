@@ -1,41 +1,74 @@
 import jwt from 'jsonwebtoken';
 import { query } from '../db/connection.js';
+import { User, Role, Permission } from '../models';
 
-export const auth = async (req, res, next) => {
-  try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return res.status(401).json({ message: 'Authentication required' });
+const auth = {
+  // Verify JWT token middleware
+  authenticateToken: async (req, res, next) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const token = authHeader && authHeader.split(' ')[1];
+
+      if (!token) {
+        return res.status(401).json({ error: 'Access token required' });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findByPk(decoded.id, {
+        include: [{ model: Role, include: [Permission] }]
+      });
+
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+
+      req.user = user;
+      next();
+    } catch (error) {
+      return res.status(401).json({ error: 'Invalid token' });
     }
+  },
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Check if user still exists and is active
-    const { rows } = await query(
-      'SELECT id, email, role FROM users WHERE id = $1 AND is_active = true',
-      [decoded.userId]
-    );
+  // Check if user has required role
+  hasRole: (roleName) => {
+    return async (req, res, next) => {
+      try {
+        const userRoles = await req.user.getRoles();
+        const hasRole = userRoles.some(role => role.name === roleName);
 
-    if (!rows.length) {
-      throw new Error();
-    }
+        if (!hasRole) {
+          return res.status(403).json({ error: 'Access denied' });
+        }
 
-    req.user = rows[0];
-    req.token = token;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Please authenticate' });
+        next();
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    };
+  },
+
+  // Check if user has required permission
+  hasPermission: (permissionName) => {
+    return async (req, res, next) => {
+      try {
+        const userRoles = await req.user.getRoles({
+          include: [Permission]
+        });
+
+        const hasPermission = userRoles.some(role =>
+          role.Permissions.some(permission => permission.name === permissionName)
+        );
+
+        if (!hasPermission) {
+          return res.status(403).json({ error: 'Access denied' });
+        }
+
+        next();
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    };
   }
 };
 
-export const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: 'You do not have permission to perform this action'
-      });
-    }
-    next();
-  };
-}; 
+export default auth; 
