@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
-const { checkRole } = require('../middleware/roleCheck');
+import { authenticate } from '../middleware/auth.js';
+import { checkRole } from '../middleware/roleCheck.js';
 
-const staffController = require('../controllers/hr/staffController');
-const leaveController = require('../controllers/hr/leaveController');
-const payrollController = require('../controllers/hr/payrollController');
-const recruitmentController = require('../controllers/hr/recruitmentController');
-const performanceController = require('../controllers/hr/performanceController');
-const attendanceController = require('../controllers/hr/attendanceController');
+import * as staffController from '../controllers/hr/staffController.js';
+import * as leaveController from '../controllers/hr/leaveController.js';
+import * as payrollController from '../controllers/hr/payrollController.js';
+import * as recruitmentController from '../controllers/hr/recruitmentController.js';
+import * as performanceController from '../controllers/hr/performanceController.js';
+import * as attendanceController from '../controllers/hr/attendanceController.js';
 
 // Staff Management Routes
 router.post('/staff',
@@ -198,4 +198,4 @@ router.get('/performance/stats',
     performanceController.getPerformanceStats
 );
 
-module.exports = router; 
+export default router; 

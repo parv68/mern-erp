@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authenticateToken, authorizeRoles } = require('../middleware/auth');
-const {
+import { authenticateToken, authorizeRoles } from '../middleware/auth.js';
+import {
     createExamType,
     getExamTypes,
     createExamSchedule,
@@ -11,7 +11,7 @@ const {
     getStudentMarks,
     generateReportCard,
     getReportCard
-} = require('../controllers/examinationController');
+} from '../controllers/examinationController.js';
 
 // Exam Types Routes
 router.post(
@@ -58,23 +58,23 @@ router.post(
 );
 
 router.get(
-    '/marks',
+    '/marks/student/:studentId',
     authenticateToken,
     getStudentMarks
 );
 
 // Report Cards Routes
 router.post(
-    '/report-cards',
+    '/report-cards/generate',
     authenticateToken,
     authorizeRoles(['admin', 'teacher']),
     generateReportCard
 );
 
 router.get(
-    '/report-cards',
+    '/report-cards/:studentId',
     authenticateToken,
     getReportCard
 );
 
-module.exports = router; 
+export default router; 

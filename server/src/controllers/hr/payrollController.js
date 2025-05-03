@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js';
 
 const payrollController = {
     // Generate payroll for a staff member
@@ -174,4 +174,4 @@ const payrollController = {
     }
 };
 
-module.exports = payrollController; 
+export default payrollController; 

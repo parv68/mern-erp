@@ -1,25 +1,30 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const userController = require('../controllers/userController');
-const auth = require('../middleware/auth');
+import { login, register, getProfile, updateProfile, changePassword } from '../controllers/auth.js';
+import { verifyToken, checkRole } from '../middleware/auth.js';
+import { pool } from '../db/connection.js';
 
 // Public routes
-router.post('/login', userController.login);
+router.post('/login', login);
+router.post('/register', register);
 
 // Protected routes
-router.use(auth.authenticateToken);
+router.use(verifyToken);
 
 // User profile routes (all authenticated users)
-router.get('/profile', userController.getProfile);
-router.put('/profile', userController.updateProfile);
-router.put('/change-password', userController.changePassword);
+router.get('/profile', getProfile);
+router.put('/profile', updateProfile);
+router.put('/change-password', changePassword);
 
 // Admin only routes
-router.post('/users', auth.hasRole('admin'), userController.create);
-router.get('/users', auth.hasRole('admin'), userController.getAll);
-router.get('/users/:id', auth.hasRole('admin'), userController.getById);
-router.put('/users/:id', auth.hasRole('admin'), userController.update);
-router.delete('/users/:id', auth.hasRole('admin'), userController.delete);
-router.post('/users/:id/reset-password', auth.hasRole('admin'), userController.resetPassword);
+router.use(checkRole(['admin']));
+router.get('/', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT id, email, role, first_name, last_name FROM users ORDER BY id');
+        res.json(result.rows);
+    } catch (error) {
+        res.status(500).json({ message: "Error getting users" });
+    }
+});
 
-module.exports = router; 
+export default router; 

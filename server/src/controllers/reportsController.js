@@ -1,12 +1,12 @@
-const pool = require('../config/db');
-const PDFDocument = require('pdfkit');
-const ExcelJS = require('exceljs');
-const fs = require('fs');
-const path = require('path');
-const { format } = require('date-fns');
+import { pool } from '../db/connection.js';
+import PDFDocument from 'pdfkit';
+import ExcelJS from 'exceljs';
+import fs from 'fs';
+import path from 'path';
+import { format } from 'date-fns';
 
 // Get system-wide metrics for admin dashboard
-exports.getAdminMetrics = async (req, res) => {
+export const getAdminMetrics = async (req, res) => {
   try {
     const metrics = await pool.query(
       `SELECT * FROM report_metrics 
@@ -27,7 +27,7 @@ exports.getAdminMetrics = async (req, res) => {
 };
 
 // Get class-specific metrics for teacher dashboard
-exports.getTeacherMetrics = async (req, res) => {
+export const getTeacherMetrics = async (req, res) => {
   try {
     const { classId } = req.params;
     const metrics = await pool.query(
@@ -51,7 +51,7 @@ exports.getTeacherMetrics = async (req, res) => {
 };
 
 // Get student-specific metrics
-exports.getStudentMetrics = async (req, res) => {
+export const getStudentMetrics = async (req, res) => {
   try {
     const { studentId } = req.user;
     const metrics = await pool.query(
@@ -75,7 +75,7 @@ exports.getStudentMetrics = async (req, res) => {
 };
 
 // Generate report based on type and parameters
-exports.generateReport = async (req, res) => {
+export const generateReport = async (req, res) => {
   try {
     const { type, startDate, endDate, classId, subjectId } = req.query;
     const { role } = req.user;
@@ -143,7 +143,7 @@ exports.generateReport = async (req, res) => {
 };
 
 // Export report in specified format
-exports.exportReport = async (req, res) => {
+export const exportReport = async (req, res) => {
   try {
     const { type, format, startDate, endDate } = req.query;
     const { role } = req.user;
@@ -314,4 +314,10 @@ async function generateExcel(data, filePath) {
   return workbook.xlsx.writeFile(filePath);
 }
 
-module.exports = exports; 
+export default {
+  getAdminMetrics,
+  getTeacherMetrics,
+  getStudentMetrics,
+  generateReport,
+  exportReport
+}; 

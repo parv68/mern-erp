@@ -1,37 +1,37 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authenticateUser, authorizeRole } = require('../middleware/auth');
-const {
+import { authenticateToken, authorizeRoles } from '../middleware/auth.js';
+import {
     createFeeStructure,
     getFeeStructures,
-    createPayment,
-    getPaymentHistory,
-    createSalaryStructure,
-    processSalaryPayment,
-    submitReimbursement,
-    approveReimbursement,
-    generateFinancialReport
-} = require('../controllers/financialController');
+    updateFeeStructure,
+    deleteFeeStructure,
+    generateFeeChallan,
+    getFeeChallans,
+    collectFeePayment,
+    getFeePayments,
+    getFeeDefaulters,
+    getFinancialStats
+} from '../controllers/financialController.js';
 
 // Fee Structure Routes
-router.post('/fee-structures', authenticateUser, authorizeRole(['admin', 'accountant']), createFeeStructure);
-router.get('/fee-structures', authenticateUser, getFeeStructures);
+router.post('/fee-structures', authenticateToken, authorizeRoles(['admin']), createFeeStructure);
+router.get('/fee-structures', authenticateToken, getFeeStructures);
+router.put('/fee-structures/:id', authenticateToken, authorizeRoles(['admin']), updateFeeStructure);
+router.delete('/fee-structures/:id', authenticateToken, authorizeRoles(['admin']), deleteFeeStructure);
 
-// Payment Routes
-router.post('/payments', authenticateUser, authorizeRole(['admin', 'accountant', 'parent']), createPayment);
-router.get('/payments/student/:student_id', authenticateUser, getPaymentHistory);
+// Fee Challan Routes
+router.post('/challans', authenticateToken, authorizeRoles(['admin', 'accountant']), generateFeeChallan);
+router.get('/challans', authenticateToken, getFeeChallans);
 
-// Salary Routes
-router.post('/salary-structures', authenticateUser, authorizeRole(['admin', 'accountant']), createSalaryStructure);
-router.post('/salary-payments', authenticateUser, authorizeRole(['admin', 'accountant']), processSalaryPayment);
-router.get('/salary-payments/staff/:staff_id', authenticateUser, authorizeRole(['admin', 'accountant', 'teacher']), getPaymentHistory);
+// Fee Payment Routes
+router.post('/payments', authenticateToken, authorizeRoles(['admin', 'accountant']), collectFeePayment);
+router.get('/payments', authenticateToken, getFeePayments);
 
-// Reimbursement Routes
-router.post('/reimbursements', authenticateUser, authorizeRole(['teacher']), submitReimbursement);
-router.put('/reimbursements/:id', authenticateUser, authorizeRole(['admin', 'accountant']), approveReimbursement);
-router.get('/reimbursements/staff/:staff_id', authenticateUser, authorizeRole(['admin', 'accountant', 'teacher']), getPaymentHistory);
+// Fee Defaulters Routes
+router.get('/defaulters', authenticateToken, authorizeRoles(['admin', 'accountant']), getFeeDefaulters);
 
-// Financial Reports
-router.get('/reports', authenticateUser, authorizeRole(['admin', 'accountant']), generateFinancialReport);
+// Financial Stats Routes
+router.get('/stats', authenticateToken, authorizeRoles(['admin', 'accountant']), getFinancialStats);
 
-module.exports = router; 
+export default router; 

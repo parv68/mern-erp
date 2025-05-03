@@ -1,8 +1,8 @@
-const pool = require('../db/config');
-const { validateExamSchedule, validateAssessment, validateMarks } = require('../utils/validators');
+import { pool } from '../db/connection.js';
+import { validateExamSchedule, validateAssessment, validateMarks } from '../utils/validators.js';
 
 // Exam Types Controllers
-const createExamType = async (req, res) => {
+export const createExamType = async (req, res) => {
     try {
         const { name, description } = req.body;
         const result = await pool.query(
@@ -11,27 +11,29 @@ const createExamType = async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create exam type' });
+        console.error('Error creating exam type:', error);
+        res.status(500).json({ message: 'Failed to create exam type' });
     }
 };
 
-const getExamTypes = async (req, res) => {
+export const getExamTypes = async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM exam_types ORDER BY name');
         res.json(result.rows);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch exam types' });
+        console.error('Error fetching exam types:', error);
+        res.status(500).json({ message: 'Failed to fetch exam types' });
     }
 };
 
 // Exam Schedules Controllers
-const createExamSchedule = async (req, res) => {
+export const createExamSchedule = async (req, res) => {
     try {
         const { exam_type_id, class_id, subject_id, exam_date, start_time, end_time, venue } = req.body;
         const created_by = req.user.id;
 
         if (!validateExamSchedule(req.body)) {
-            return res.status(400).json({ error: 'Invalid exam schedule data' });
+            return res.status(400).json({ message: 'Invalid exam schedule data' });
         }
 
         const result = await pool.query(
@@ -42,11 +44,12 @@ const createExamSchedule = async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create exam schedule' });
+        console.error('Error creating exam schedule:', error);
+        res.status(500).json({ message: 'Failed to create exam schedule' });
     }
 };
 
-const getExamSchedules = async (req, res) => {
+export const getExamSchedules = async (req, res) => {
     try {
         const { class_id, exam_type_id } = req.query;
         let query = `
@@ -72,12 +75,13 @@ const getExamSchedules = async (req, res) => {
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch exam schedules' });
+        console.error('Error fetching exam schedules:', error);
+        res.status(500).json({ message: 'Failed to fetch exam schedules' });
     }
 };
 
 // Assessments Controllers
-const createAssessment = async (req, res) => {
+export const createAssessment = async (req, res) => {
     try {
         const {
             name, description, exam_type_id, class_id,
@@ -86,7 +90,7 @@ const createAssessment = async (req, res) => {
         const created_by = req.user.id;
 
         if (!validateAssessment(req.body)) {
-            return res.status(400).json({ error: 'Invalid assessment data' });
+            return res.status(400).json({ message: 'Invalid assessment data' });
         }
 
         const result = await pool.query(
@@ -97,18 +101,19 @@ const createAssessment = async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create assessment' });
+        console.error('Error creating assessment:', error);
+        res.status(500).json({ message: 'Failed to create assessment' });
     }
 };
 
 // Student Marks Controllers
-const enterMarks = async (req, res) => {
+export const enterMarks = async (req, res) => {
     try {
         const { student_id, assessment_id, marks_obtained, remarks } = req.body;
         const entered_by = req.user.id;
 
         if (!validateMarks(req.body)) {
-            return res.status(400).json({ error: 'Invalid marks data' });
+            return res.status(400).json({ message: 'Invalid marks data' });
         }
 
         const result = await pool.query(
@@ -119,11 +124,12 @@ const enterMarks = async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to enter marks' });
+        console.error('Error entering marks:', error);
+        res.status(500).json({ message: 'Failed to enter marks' });
     }
 };
 
-const getStudentMarks = async (req, res) => {
+export const getStudentMarks = async (req, res) => {
     try {
         const { student_id, assessment_id } = req.query;
         let query = `
@@ -149,12 +155,13 @@ const getStudentMarks = async (req, res) => {
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch student marks' });
+        console.error('Error fetching student marks:', error);
+        res.status(500).json({ message: 'Failed to fetch student marks' });
     }
 };
 
 // Report Card Controllers
-const generateReportCard = async (req, res) => {
+export const generateReportCard = async (req, res) => {
     try {
         const { student_id, class_id, exam_type_id } = req.body;
         const generated_by = req.user.id;
@@ -183,11 +190,12 @@ const generateReportCard = async (req, res) => {
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to generate report card' });
+        console.error('Error generating report card:', error);
+        res.status(500).json({ message: 'Failed to generate report card' });
     }
 };
 
-const getReportCard = async (req, res) => {
+export const getReportCard = async (req, res) => {
     try {
         const { student_id, exam_type_id } = req.query;
         const result = await pool.query(
@@ -203,7 +211,8 @@ const getReportCard = async (req, res) => {
         );
         res.json(result.rows[0]);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch report card' });
+        console.error('Error fetching report card:', error);
+        res.status(500).json({ message: 'Failed to fetch report card' });
     }
 };
 
@@ -217,7 +226,7 @@ const calculateGrade = (percentage) => {
     return 'F';
 };
 
-module.exports = {
+export default {
     createExamType,
     getExamTypes,
     createExamSchedule,

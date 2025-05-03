@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, query } from 'express-validator';
-import { auth, authorize } from '../middleware/auth.js';
+// import { authorize } from '../middleware/auth.js';
 import {
   createTimetableSlot,
   getTimetable,

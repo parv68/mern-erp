@@ -1,98 +1,98 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authenticate } = require('../middleware/auth');
-const { checkRole } = require('../middleware/roleCheck');
+import { authenticate } from '../middleware/auth.js';
+import { checkRole } from '../middleware/roleCheck.js';
 
-const announcementController = require('../controllers/communication/announcementController');
-const messagingController = require('../controllers/communication/messagingController');
-const newsletterController = require('../controllers/communication/newsletterController');
-const notificationController = require('../controllers/communication/notificationController');
+import { createAnnouncement, getAnnouncements, markAsRead as markAnnouncementAsRead, deleteAnnouncement } from '../controllers/communication/announcementController.js';
+import { getConversations, startConversation, getMessages, sendMessage } from '../controllers/communication/messagingController.js';
+import { createNewsletter, getNewsletters, sendNewsletter, deleteNewsletter, getNewsletterStats } from '../controllers/communication/newsletterController.js';
+import { getNotifications, markAsRead, markAllAsRead, deleteNotification, getUnreadCount } from '../controllers/communication/notificationController.js';
 
 // Announcement Routes
 router.post('/announcements',
     authenticate,
     checkRole(['admin', 'teacher']),
-    announcementController.createAnnouncement
+    createAnnouncement
 );
 router.get('/announcements',
     authenticate,
-    announcementController.getAnnouncements
+    getAnnouncements
 );
 router.post('/announcements/:announcementId/read',
     authenticate,
-    announcementController.markAsRead
+    markAnnouncementAsRead
 );
 router.delete('/announcements/:announcementId',
     authenticate,
     checkRole(['admin']),
-    announcementController.deleteAnnouncement
+    deleteAnnouncement
 );
 
 // Messaging Routes
 router.get('/conversations',
     authenticate,
-    messagingController.getConversations
+    getConversations
 );
 router.post('/conversations',
     authenticate,
-    messagingController.startConversation
+    startConversation
 );
 router.get('/conversations/:conversationId/messages',
     authenticate,
-    messagingController.getMessages
+    getMessages
 );
 router.post('/conversations/:conversationId/messages',
     authenticate,
-    messagingController.sendMessage
+    sendMessage
 );
 
 // Newsletter Routes
 router.post('/newsletters',
     authenticate,
     checkRole(['admin']),
-    newsletterController.createNewsletter
+    createNewsletter
 );
 router.get('/newsletters',
     authenticate,
     checkRole(['admin']),
-    newsletterController.getNewsletters
+    getNewsletters
 );
 router.post('/newsletters/:newsletterId/send',
     authenticate,
     checkRole(['admin']),
-    newsletterController.sendNewsletter
+    sendNewsletter
 );
 router.delete('/newsletters/:newsletterId',
     authenticate,
     checkRole(['admin']),
-    newsletterController.deleteNewsletter
+    deleteNewsletter
 );
 router.get('/newsletters/:newsletterId/stats',
     authenticate,
     checkRole(['admin']),
-    newsletterController.getNewsletterStats
+    getNewsletterStats
 );
 
 // Notification Routes
 router.get('/notifications',
     authenticate,
-    notificationController.getNotifications
+    getNotifications
 );
 router.post('/notifications/:notificationId/read',
     authenticate,
-    notificationController.markAsRead
+    markAsRead
 );
 router.post('/notifications/mark-all-read',
     authenticate,
-    notificationController.markAllAsRead
+    markAllAsRead
 );
 router.delete('/notifications/:notificationId',
     authenticate,
-    notificationController.deleteNotification
+    deleteNotification
 );
 router.get('/notifications/unread-count',
     authenticate,
-    notificationController.getUnreadCount
+    getUnreadCount
 );
 
-module.exports = router; 
+export default router; 

@@ -1,8 +1,8 @@
-const pool = require('../config/database');
-const { validateBook, validateIssue } = require('../utils/validators');
+import pool from '../config/database';
+import { validateBook, validateIssue } from '../utils/validators';
 
 // Book Management Controllers
-exports.addBook = async (req, res) => {
+export const addBook = async (req, res) => {
     try {
         const {
             isbn, title, author, publisher, publication_year,
@@ -49,7 +49,7 @@ exports.addBook = async (req, res) => {
     }
 };
 
-exports.searchBooks = async (req, res) => {
+export const searchBooks = async (req, res) => {
     try {
         const { query, category, available_only } = req.query;
         let sqlQuery = 'SELECT * FROM books WHERE 1=1';
@@ -77,7 +77,7 @@ exports.searchBooks = async (req, res) => {
 };
 
 // Book Issue Controllers
-exports.issueBook = async (req, res) => {
+export const issueBook = async (req, res) => {
     try {
         const { book_id, membership_id, due_date } = req.body;
         const issued_by = req.user.id; // From auth middleware
@@ -144,7 +144,7 @@ exports.issueBook = async (req, res) => {
     }
 };
 
-exports.returnBook = async (req, res) => {
+export const returnBook = async (req, res) => {
     try {
         const { issue_id } = req.params;
         const { fine_amount = 0, condition } = req.body;
@@ -205,7 +205,7 @@ exports.returnBook = async (req, res) => {
 };
 
 // Reservation Controllers
-exports.reserveBook = async (req, res) => {
+export const reserveBook = async (req, res) => {
     try {
         const { book_id, membership_id, valid_until, notes } = req.body;
 
@@ -232,7 +232,7 @@ exports.reserveBook = async (req, res) => {
 };
 
 // Report Controllers
-exports.generateReport = async (req, res) => {
+export const generateReport = async (req, res) => {
     try {
         const { report_type, start_date, end_date } = req.query;
         let result;
@@ -274,7 +274,7 @@ exports.generateReport = async (req, res) => {
 };
 
 // Membership Controllers
-exports.createMembership = async (req, res) => {
+export const createMembership = async (req, res) => {
     try {
         const {
             user_id, user_type, membership_number,

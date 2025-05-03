@@ -1,4 +1,4 @@
-const { pool } = require('../db');
+import { pool } from '../db';
 
 // Staff Management
 const staffController = {
@@ -558,7 +558,7 @@ const performanceController = {
   }
 };
 
-module.exports = {
+export default {
   staffController,
   leaveController,
   payrollController,

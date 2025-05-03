@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js'
 
 const recruitmentController = {
     // Create job opening
@@ -219,4 +219,4 @@ const recruitmentController = {
     }
 };
 
-module.exports = recruitmentController; 
+export default recruitmentController; 

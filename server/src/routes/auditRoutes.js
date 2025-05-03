@@ -1,15 +1,16 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const auditController = require('../controllers/auditController');
-const auth = require('../middleware/auth');
+import { getLogs, createLog } from '../controllers/auditController.js';
+import { verifyToken, checkRole } from '../middleware/auth.js';
 
 // All routes require authentication and admin role
-router.use(auth.authenticateToken);
+router.use(verifyToken);
+router.use(checkRole(['admin']));
 
 // Get audit logs (admin only)
-router.get('/audit-logs', auth.hasRole('admin'), auditController.getLogs);
+router.get('/logs', getLogs);
 
 // Create audit log entry (internal use, protected with admin role)
-router.post('/audit-logs', auth.hasRole('admin'), auditController.createLog);
+router.post('/logs', createLog);
 
-module.exports = router; 
+export default router; 

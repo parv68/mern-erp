@@ -1,7 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { login, register, getProfile, updateProfile, changePassword } from '../controllers/auth.js';
-import { auth } from '../middleware/auth.js';
+import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -37,8 +37,8 @@ const changePasswordValidation = [
 // Routes
 router.post('/login', loginValidation, login);
 router.post('/register', registerValidation, register);
-router.get('/profile', auth, getProfile);
-router.put('/profile', [auth, updateProfileValidation], updateProfile);
-router.put('/change-password', [auth, changePasswordValidation], changePassword);
+router.get('/profile', verifyToken, getProfile);
+router.put('/profile', [verifyToken, updateProfileValidation], updateProfile);
+router.put('/change-password', [verifyToken, changePasswordValidation], changePassword);
 
 export default router; 

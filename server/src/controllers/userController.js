@@ -1,9 +1,9 @@
-const { User, Role, Permission } = require('../models');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { Op } = require('sequelize');
-const { pool } = require('../db');
-const auditLogger = require('../middleware/auditLogger');
+import { User, Role, Permission } from '../models';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
+import { pool } from '../db';
+import auditLogger from '../middleware/auditLogger';
 
 const userController = {
   // Create a new user
@@ -231,4 +231,4 @@ const userController = {
   }
 };
 
-module.exports = userController; 
+export default userController; 

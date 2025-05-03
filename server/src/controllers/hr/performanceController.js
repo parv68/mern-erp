@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js';
 
 const performanceController = {
     // Create performance review
@@ -210,4 +210,4 @@ const performanceController = {
     }
 };
 
-module.exports = performanceController; 
+export default performanceController; 

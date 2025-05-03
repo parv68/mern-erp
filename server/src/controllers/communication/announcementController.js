@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js';
 
 const announcementController = {
     // Create a new announcement
@@ -131,4 +131,4 @@ const announcementController = {
     }
 };
 
-module.exports = announcementController; 
+export default announcementController; 

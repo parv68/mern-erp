@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js';
 
 const notificationController = {
     // Get user's notifications
@@ -102,4 +102,4 @@ const notificationController = {
     }
 };
 
-module.exports = notificationController; 
+export default notificationController; 

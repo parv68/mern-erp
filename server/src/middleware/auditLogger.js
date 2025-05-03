@@ -1,4 +1,4 @@
-const { pool } = require('../db');
+import { pool } from '../db';
 
 /**
  * Middleware to log user authentication events
@@ -49,4 +49,4 @@ const auditLogger = {
   }
 };
 
-module.exports = auditLogger; 
+export default auditLogger; 

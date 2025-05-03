@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const reportsController = require('../controllers/reportsController');
-const { authenticate, authorize } = require('../middleware/auth');
+import { getAdminMetrics, getTeacherMetrics, getStudentMetrics, generateReport, exportReport } from '../controllers/reportsController.js';
+import { authenticate, authorize } from '../middleware/auth.js';
 
 // Admin routes
 router.get(
   '/metrics',
   authenticate,
   authorize(['admin']),
-  reportsController.getAdminMetrics
+  getAdminMetrics
 );
 
 // Teacher routes
@@ -16,21 +16,21 @@ router.get(
   '/teacher/metrics/:classId',
   authenticate,
   authorize(['teacher']),
-  reportsController.getTeacherMetrics
+  getTeacherMetrics
 );
 
 router.get(
   '/teacher/reports/generate',
   authenticate,
   authorize(['teacher']),
-  reportsController.generateReport
+  generateReport
 );
 
 router.get(
   '/teacher/reports/export',
   authenticate,
   authorize(['teacher']),
-  reportsController.exportReport
+  exportReport
 );
 
 // Student/Parent routes
@@ -38,34 +38,34 @@ router.get(
   '/student/metrics',
   authenticate,
   authorize(['student', 'parent']),
-  reportsController.getStudentMetrics
+  getStudentMetrics
 );
 
 router.get(
   '/student/reports/generate',
   authenticate,
   authorize(['student', 'parent']),
-  reportsController.generateReport
+  generateReport
 );
 
 router.get(
   '/student/reports/export',
   authenticate,
   authorize(['student', 'parent']),
-  reportsController.exportReport
+  exportReport
 );
 
 // Common routes
 router.get(
   '/reports/generate',
   authenticate,
-  reportsController.generateReport
+  generateReport
 );
 
 router.get(
   '/reports/export',
   authenticate,
-  reportsController.exportReport
+  exportReport
 );
 
-module.exports = router; 
+export default router; 

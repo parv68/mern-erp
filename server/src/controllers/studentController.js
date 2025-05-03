@@ -53,6 +53,49 @@ export const admitStudent = async (req, res) => {
     }
 };
 
+// Get all students
+export const getAllStudents = async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT s.*, c.name as class_name 
+             FROM students s 
+             LEFT JOIN classes c ON s.class_id = c.id 
+             ORDER BY s.first_name, s.last_name`
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({ message: 'Error fetching students' });
+    }
+};
+
+// Get student by ID
+export const getStudentById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(
+            `SELECT s.*, c.name as class_name,
+                    p.name as parent_name, p.contact as parent_contact,
+                    p.email as parent_email
+             FROM students s 
+             LEFT JOIN classes c ON s.class_id = c.id
+             LEFT JOIN parents p ON s.parent_id = p.id
+             WHERE s.id = $1`,
+            [id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+        
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error fetching student:', error);
+        res.status(500).json({ message: 'Error fetching student details' });
+    }
+};
+
+// Update student
 export const updateStudent = async (req, res) => {
     const { id } = req.params;
     const updateFields = req.body;
@@ -77,52 +120,62 @@ export const updateStudent = async (req, res) => {
     }
 };
 
-export const getStudent = async (req, res) => {
-    const { id } = req.params;
+// Delete student
+export const deleteStudent = async (req, res) => {
     try {
+        const { id } = req.params;
+        const result = await pool.query(
+            'DELETE FROM students WHERE id = $1 RETURNING *',
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        res.json({ message: 'Student deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting student:', error);
+        res.status(500).json({ message: 'Error deleting student' });
+    }
+};
+
+// Get students by class
+export const getStudentsByClass = async (req, res) => {
+    try {
+        const { classId } = req.params;
         const result = await pool.query(
             `SELECT s.*, c.name as class_name 
              FROM students s 
-             LEFT JOIN classes c ON s.class_id = c.id 
-             WHERE s.id = $1`,
-            [id]
-        );
-        
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Student not found' });
-        }
-        
-        res.json(result.rows[0]);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-export const getStudentsByClass = async (req, res) => {
-    const { class_id } = req.params;
-    try {
-        const result = await pool.query(
-            'SELECT * FROM students WHERE class_id = $1 ORDER BY first_name, last_name',
-            [class_id]
+             JOIN classes c ON s.class_id = c.id 
+             WHERE s.class_id = $1 
+             ORDER BY s.first_name, s.last_name`,
+            [classId]
         );
         res.json(result.rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error fetching students by class:', error);
+        res.status(500).json({ message: 'Error fetching students by class' });
     }
 };
 
-export const addAcademicRemark = async (req, res) => {
-    const { student_id, subject_id, remark } = req.body;
+// Get student academic performance
+export const getStudentPerformance = async (req, res) => {
     try {
-        await pool.query(
-            `INSERT INTO academic_remarks (
-                student_id, teacher_id, subject_id, remark, remark_date
-            ) VALUES ($1, $2, $3, $4, CURRENT_DATE)`,
-            [student_id, req.user.id, subject_id, remark]
+        const { id } = req.params;
+        const result = await pool.query(
+            `SELECT e.*, s.name as subject_name, ex.name as exam_name
+             FROM exam_results e
+             JOIN subjects s ON e.subject_id = s.id
+             JOIN exams ex ON e.exam_id = ex.id
+             WHERE e.student_id = $1
+             ORDER BY e.exam_date DESC`,
+            [id]
         );
-        res.status(201).json({ message: 'Academic remark added successfully' });
+        res.json(result.rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error fetching student performance:', error);
+        res.status(500).json({ message: 'Error fetching student performance' });
     }
 };
 
@@ -196,6 +249,7 @@ export const getStudentAttendance = async (req, res) => {
     }
 };
 
+// Leave Management
 export const submitLeaveApplication = async (req, res) => {
     const { student_id, start_date, end_date, reason } = req.body;
     try {

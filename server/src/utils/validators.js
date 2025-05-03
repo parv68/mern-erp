@@ -1,63 +1,63 @@
-const validateExamSchedule = (data) => {
+/**
+ * Utility functions for validating examination-related data
+ */
+
+// Validate exam schedule data
+export const validateExamSchedule = (data) => {
     const { exam_type_id, class_id, subject_id, exam_date, start_time, end_time } = data;
-    
-    if (!exam_type_id || !class_id || !subject_id || !exam_date || !start_time || !end_time) {
-        return false;
-    }
-
-    // Validate date and time formats
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-
-    if (!dateRegex.test(exam_date)) return false;
-    if (!timeRegex.test(start_time) || !timeRegex.test(end_time)) return false;
-
-    // Ensure end time is after start time
-    const [startHour, startMinute] = start_time.split(':').map(Number);
-    const [endHour, endMinute] = end_time.split(':').map(Number);
-    
-    if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
-        return false;
-    }
-
-    return true;
+    return !!exam_type_id && !!class_id && !!subject_id && !!exam_date && !!start_time && !!end_time;
 };
 
-const validateAssessment = (data) => {
-    const {
-        name, exam_type_id, class_id, subject_id,
-        total_marks, passing_marks
-    } = data;
-
-    if (!name || !exam_type_id || !class_id || !subject_id || 
-        !total_marks || !passing_marks) {
-        return false;
-    }
-
-    // Validate marks
-    if (isNaN(total_marks) || isNaN(passing_marks)) return false;
-    if (total_marks <= 0 || passing_marks <= 0) return false;
-    if (passing_marks > total_marks) return false;
-
-    return true;
+// Validate assessment data
+export const validateAssessment = (data) => {
+    const { name, exam_type_id, class_id, subject_id, total_marks } = data;
+    return !!name && !!exam_type_id && !!class_id && !!subject_id && total_marks > 0;
 };
 
-const validateMarks = (data) => {
+// Validate marks data
+export const validateMarks = (data) => {
     const { student_id, assessment_id, marks_obtained } = data;
-
-    if (!student_id || !assessment_id || marks_obtained === undefined) {
-        return false;
-    }
-
-    // Validate marks
-    if (isNaN(marks_obtained)) return false;
-    if (marks_obtained < 0) return false;
-
-    return true;
+    return !!student_id && !!assessment_id && marks_obtained >= 0;
 };
 
-module.exports = {
+// Validate attendance data
+export const validateAttendance = (data) => {
+    const { student_id, class_id, date, status } = data;
+    return !!student_id && !!class_id && !!date && ['present', 'absent', 'late', 'excused'].includes(status);
+};
+
+// Validate student data
+export const validateStudent = (data) => {
+    const { first_name, last_name, date_of_birth, class_id } = data;
+    return !!first_name && !!last_name && !!date_of_birth && !!class_id;
+};
+
+// Validate teacher data
+export const validateTeacher = (data) => {
+    const { first_name, last_name, email } = data;
+    return !!first_name && !!last_name && !!email && /\S+@\S+\.\S+/.test(email);
+};
+
+// Validate fee data
+export const validateFeeData = (data) => {
+    const { student_id, amount, fee_type, due_date } = data;
+    return !!student_id && amount > 0 && !!fee_type && !!due_date;
+};
+
+// Validate payment data
+export const validatePayment = (data) => {
+    const { fee_id, amount_paid, payment_method } = data;
+    return !!fee_id && amount_paid > 0 && !!payment_method;
+};
+
+// Export all validators for use in controllers
+export default {
     validateExamSchedule,
     validateAssessment,
-    validateMarks
+    validateMarks,
+    validateAttendance,
+    validateStudent,
+    validateTeacher,
+    validateFeeData,
+    validatePayment
 }; 

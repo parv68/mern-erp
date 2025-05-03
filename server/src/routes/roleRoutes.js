@@ -1,20 +1,23 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const roleController = require('../controllers/roleController');
-const auth = require('../middleware/auth');
+import * as roleController from '../controllers/roleController.js';
+import * as auth from '../middleware/auth.js';
 
 // All routes are admin-only
 router.use(auth.authenticateToken);
-router.use(auth.hasRole('admin'));
+router.use(auth.authorizeRoles(['admin']));
 
 // Role routes
-router.get('/roles', roleController.getAll);
-router.get('/roles/:id', roleController.getById);
-router.post('/roles', roleController.create);
-router.put('/roles/:id', roleController.update);
-router.delete('/roles/:id', roleController.delete);
+router.get('/', roleController.getAllRoles);
+router.get('/:id', roleController.getRoleById);
+router.post('/', roleController.createRole);
+router.put('/:id', roleController.updateRole);
+router.delete('/:id', roleController.deleteRole);
 
 // Permission routes
 router.get('/permissions', roleController.getAllPermissions);
+router.post('/permissions', roleController.createPermission);
+router.post('/assign', roleController.assignRoleToUser);
+router.delete('/assign/:userId/:roleId', roleController.removeRoleFromUser);
 
-module.exports = router; 
+export default router; 

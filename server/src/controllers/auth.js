@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { query } from '../db/connection.js';
+import { pool } from '../db/connection.js';
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     // Find user by email
-    const { rows } = await query(
+    const { rows } = await pool.query(
       'SELECT id, email, password, role, first_name, last_name FROM users WHERE email = $1 AND is_active = true',
       [email]
     );
@@ -26,9 +26,9 @@ export const login = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: '7d' }
     );
 
     // Remove password from response
@@ -49,7 +49,7 @@ export const register = async (req, res) => {
     const { email, password, role, first_name, last_name } = req.body;
 
     // Check if user already exists
-    const existingUser = await query(
+    const existingUser = await pool.query(
       'SELECT id FROM users WHERE email = $1',
       [email]
     );
@@ -63,7 +63,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user
-    const { rows } = await query(
+    const { rows } = await pool.query(
       `INSERT INTO users (email, password, role, first_name, last_name)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, email, role, first_name, last_name`,
@@ -74,9 +74,9 @@ export const register = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: '7d' }
     );
 
     res.status(201).json({
@@ -91,7 +91,7 @@ export const register = async (req, res) => {
 
 export const getProfile = async (req, res) => {
   try {
-    const { rows } = await query(
+    const { rows } = await pool.query(
       `SELECT u.id, u.email, u.role, u.first_name, u.last_name,
               CASE 
                 WHEN u.role = 'teacher' THEN json_build_object(
@@ -130,7 +130,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { first_name, last_name } = req.body;
 
-    const { rows } = await query(
+    const { rows } = await pool.query(
       `UPDATE users 
        SET first_name = $1, last_name = $2
        WHERE id = $3
@@ -150,7 +150,7 @@ export const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     // Get current user
-    const { rows } = await query(
+    const { rows } = await pool.query(
       'SELECT password FROM users WHERE id = $1',
       [req.user.id]
     );
@@ -166,7 +166,7 @@ export const changePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     // Update password
-    await query(
+    await pool.query(
       'UPDATE users SET password = $1 WHERE id = $2',
       [hashedPassword, req.user.id]
     );

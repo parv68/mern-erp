@@ -1,5 +1,5 @@
-const pool = require('../../config/database');
-const { handleError } = require('../../utils/errorHandler');
+import { pool } from '../../db/connection.js';
+import { handleError } from '../../utils/errorHandler.js';
 
 const leaveController = {
     // Create leave type
@@ -181,4 +181,4 @@ const leaveController = {
     }
 };
 
-module.exports = leaveController; 
+export default leaveController; 
