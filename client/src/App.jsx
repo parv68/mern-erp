@@ -18,6 +18,13 @@ import ExamManagement from './components/admin/ExamManagement';
 import AssessmentManagement from './components/teacher/AssessmentManagement';
 import ExamResults from './components/student/ExamResults';
 
+// Library Components
+import BookManagement from './components/library/BookManagement';
+import IssueReturn from './components/library/IssueReturn';
+import BookSearch from './components/library/BookSearch';
+import MyBooks from './components/library/MyBooks';
+import LibraryReports from './components/library/LibraryReports';
+
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -123,35 +130,77 @@ function App() {
           }
         />
 
-        {/* Examination Module Routes */}
+        {/* Library Management Routes */}
         <Route
-          path="/admin/exams"
+          path="library/books"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <ExamManagement />
-            </ProtectedRoute>
+            <RoleRoute allowedRoles={['librarian']}>
+              <BookManagement />
+            </RoleRoute>
           }
         />
         <Route
-          path="/teacher/assessments"
+          path="library/issue-return"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher']}>
-              <AssessmentManagement />
-            </ProtectedRoute>
+            <RoleRoute allowedRoles={['librarian']}>
+              <IssueReturn />
+            </RoleRoute>
           }
         />
         <Route
-          path="/exams"
+          path="library/reports"
           element={
-            <ProtectedRoute allowedRoles={['student', 'parent']}>
-              <ExamResults />
-            </ProtectedRoute>
+            <RoleRoute allowedRoles={['librarian']}>
+              <LibraryReports />
+            </RoleRoute>
           }
         />
-      </Route>
+        <Route
+          path="library/search"
+          element={
+            <RoleRoute allowedRoles={['student', 'teacher']}>
+              <BookSearch />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="library/my-books"
+          element={
+            <RoleRoute allowedRoles={['student', 'teacher']}>
+              <MyBooks />
+            </RoleRoute>
+          }
+        />
 
-      {/* 404 route */}
-      <Route path="*" element={<NotFound />} />
+        {/* Exam Management Routes */}
+        <Route
+          path="exams/manage"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <ExamManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="exams/assessments"
+          element={
+            <RoleRoute allowedRoles={['teacher']}>
+              <AssessmentManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="exams/results"
+          element={
+            <RoleRoute allowedRoles={['student', 'parent']}>
+              <ExamResults />
+            </RoleRoute>
+          }
+        />
+
+        {/* 404 Route */}
+        <Route path="*" element={<NotFound />} />
+      </Route>
     </Routes>
   );
 }

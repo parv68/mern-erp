@@ -15,24 +15,55 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: AcademicCapIcon },
-  { name: 'Classes', href: '/classes', icon: BookOpenIcon },
-  { name: 'Timetable', href: '/timetable', icon: CalendarIcon },
-  { name: 'Attendance', href: '/attendance', icon: ClipboardDocumentListIcon },
-  { name: 'Students', href: '/students', icon: UserGroupIcon },
-  { name: 'Finance', href: '/finance', icon: BanknotesIcon },
-  { name: 'Library', href: '/library', icon: BuildingLibraryIcon },
-];
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
+
+const getNavigationItems = (userRole) => {
+  const baseNavigation = [
+    { name: 'Dashboard', href: '/', icon: AcademicCapIcon },
+    { name: 'Profile', href: '/profile', icon: UserCircleIcon },
+  ];
+
+  const roleBasedNavigation = {
+    admin: [
+      { name: 'Classes', href: '/academic/classes', icon: BookOpenIcon },
+      { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
+      { name: 'Students', href: '/students/admission', icon: UserGroupIcon },
+      { name: 'Attendance', href: '/students/attendance', icon: ClipboardDocumentListIcon },
+      { name: 'Finance', href: '/finance', icon: BanknotesIcon },
+      { name: 'Exams', href: '/exams/manage', icon: ClipboardDocumentListIcon },
+    ],
+    librarian: [
+      { name: 'Book Management', href: '/library/books', icon: BookOpenIcon },
+      { name: 'Issue/Return', href: '/library/issue-return', icon: ClipboardDocumentListIcon },
+      { name: 'Reports', href: '/library/reports', icon: ClipboardDocumentListIcon },
+    ],
+    teacher: [
+      { name: 'Classes', href: '/academic/classes', icon: BookOpenIcon },
+      { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
+      { name: 'Attendance', href: '/students/attendance', icon: ClipboardDocumentListIcon },
+      { name: 'Assessments', href: '/exams/assessments', icon: ClipboardDocumentListIcon },
+      { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
+      { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
+    ],
+    student: [
+      { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
+      { name: 'Attendance', href: '/students/attendance', icon: ClipboardDocumentListIcon },
+      { name: 'Results', href: '/exams/results', icon: ClipboardDocumentListIcon },
+      { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
+      { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
+    ],
+  };
+
+  return [...baseNavigation, ...(roleBasedNavigation[userRole] || [])];
+};
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigation = getNavigationItems(user?.role);
 
   return (
     <div>
@@ -61,6 +92,23 @@ export default function Layout() {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-in-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in-out duration-300"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
+                    <button type="button" className="-m-2.5 p-2.5" onClick={() => setSidebarOpen(false)}>
+                      <span className="sr-only">Close sidebar</span>
+                      <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                    </button>
+                  </div>
+                </Transition.Child>
+                {/* Sidebar component for mobile */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
                     <img
@@ -98,6 +146,18 @@ export default function Layout() {
                             </li>
                           ))}
                         </ul>
+                      </li>
+                      <li className="mt-auto">
+                        <button
+                          onClick={logout}
+                          className="text-gray-700 hover:text-primary-600 hover:bg-gray-50 group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                        >
+                          <UserCircleIcon
+                            className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-primary-600"
+                            aria-hidden="true"
+                          />
+                          Logout
+                        </button>
                       </li>
                     </ul>
                   </nav>
@@ -148,18 +208,27 @@ export default function Layout() {
                   ))}
                 </ul>
               </li>
+              <li className="mt-auto">
+                <button
+                  onClick={logout}
+                  className="text-gray-700 hover:text-primary-600 hover:bg-gray-50 group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                >
+                  <UserCircleIcon
+                    className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-primary-600"
+                    aria-hidden="true"
+                  />
+                  Logout
+                </button>
+              </li>
             </ul>
           </nav>
         </div>
       </div>
 
+      {/* Main content */}
       <div className="lg:pl-72">
         <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
+          <button type="button" className="-m-2.5 p-2.5 text-gray-700 lg:hidden" onClick={() => setSidebarOpen(true)}>
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
@@ -176,11 +245,8 @@ export default function Layout() {
                   <span className="sr-only">Open user menu</span>
                   <UserCircleIcon className="h-8 w-8 text-gray-400" aria-hidden="true" />
                   <span className="hidden lg:flex lg:items-center">
-                    <span
-                      className="ml-4 text-sm font-semibold leading-6 text-gray-900"
-                      aria-hidden="true"
-                    >
-                      {user?.first_name} {user?.last_name}
+                    <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                      {user?.email}
                     </span>
                   </span>
                 </Menu.Button>
@@ -216,7 +282,7 @@ export default function Layout() {
                             'block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900'
                           )}
                         >
-                          Sign out
+                          Logout
                         </button>
                       )}
                     </Menu.Item>
