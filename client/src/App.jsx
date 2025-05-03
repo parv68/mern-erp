@@ -14,6 +14,9 @@ import StudentAdmission from './components/student/StudentAdmission';
 import AttendanceManagement from './components/student/AttendanceManagement';
 import LeaveApplication from './components/student/LeaveApplication';
 import NotFound from './pages/NotFound';
+import ExamManagement from './components/admin/ExamManagement';
+import AssessmentManagement from './components/teacher/AssessmentManagement';
+import ExamResults from './components/student/ExamResults';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -93,7 +96,7 @@ function App() {
           path="academic/announcements"
           element={<Announcements />}
         />
-
+        
         {/* Student Management Routes */}
         <Route
           path="students/admission"
@@ -117,6 +120,32 @@ function App() {
             <RoleRoute allowedRoles={['admin', 'teacher', 'student', 'parent']}>
               <LeaveApplication />
             </RoleRoute>
+          }
+        />
+
+        {/* Examination Module Routes */}
+        <Route
+          path="/admin/exams"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ExamManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacher/assessments"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher']}>
+              <AssessmentManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/exams"
+          element={
+            <ProtectedRoute allowedRoles={['student', 'parent']}>
+              <ExamResults />
+            </ProtectedRoute>
           }
         />
       </Route>
