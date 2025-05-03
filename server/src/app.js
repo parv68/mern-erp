@@ -13,6 +13,7 @@ const libraryRoutes = require('./routes/library');
 const examRoutes = require('./routes/exam');
 const financeRoutes = require('./routes/finance');
 const communicationRoutes = require('./routes/communication');
+const hrRoutes = require('./routes/hr');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/library', libraryRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/communication', communicationRoutes);
+app.use('/api/hr', hrRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
