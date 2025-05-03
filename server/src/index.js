@@ -24,6 +24,7 @@ import classRoutes from './routes/classes.js';
 import timetableRoutes from './routes/timetable.js';
 import attendanceRoutes from './routes/attendance.js';
 import auditRoutes from './routes/auditRoutes.js';
+import hrRoutes from './routes/hrRoutes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -31,6 +32,7 @@ app.use('/api/classes', classRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api', auditRoutes);
+app.use('/api/hr', hrRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

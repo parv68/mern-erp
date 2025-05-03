@@ -19,6 +19,13 @@ import AssessmentManagement from './components/teacher/AssessmentManagement';
 import ExamResults from './components/student/ExamResults';
 import AuditLogs from './components/admin/AuditLogs';
 
+// HR Module Components
+import StaffManagement from './components/hr/StaffManagement';
+import StaffAttendance from './components/hr/StaffAttendance';
+import LeaveManagement from './components/hr/LeaveManagement';
+import Payroll from './components/hr/Payroll';
+import PerformanceReview from './components/hr/PerformanceReview';
+
 // Library Components
 import BookManagement from './components/library/BookManagement';
 import IssueReturn from './components/library/IssueReturn';
@@ -93,6 +100,48 @@ function App() {
           element={
             <RoleRoute allowedRoles={['admin']}>
               <AuditLogs />
+            </RoleRoute>
+          }
+        />
+        
+        {/* Human Resource Management Routes */}
+        <Route
+          path="hr/staff"
+          element={
+            <RoleRoute allowedRoles={['admin', 'hr']}>
+              <StaffManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="hr/attendance"
+          element={
+            <RoleRoute allowedRoles={['admin', 'hr', 'teacher', 'staff']}>
+              <StaffAttendance />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="hr/leave"
+          element={
+            <RoleRoute allowedRoles={['admin', 'hr', 'teacher', 'staff']}>
+              <LeaveManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="hr/payroll"
+          element={
+            <RoleRoute allowedRoles={['admin', 'hr', 'finance']}>
+              <Payroll />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="hr/performance"
+          element={
+            <RoleRoute allowedRoles={['admin', 'hr', 'principal', 'teacher', 'staff']}>
+              <PerformanceReview />
             </RoleRoute>
           }
         />

@@ -15,6 +15,7 @@ import {
   UserIcon,
   Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
+  BriefcaseIcon,
 } from '@heroicons/react/24/outline';
 
 const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
@@ -75,6 +76,39 @@ const Sidebar = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
           title: 'Leave Applications',
           path: '/students/leave',
           roles: ['admin', 'teacher']
+        }
+      ]
+    },
+    {
+      title: 'Human Resources',
+      icon: <BriefcaseIcon className="h-6 w-6" />,
+      path: '#',
+      roles: ['admin', 'hr', 'teacher', 'staff'],
+      submenu: [
+        {
+          title: 'Staff Management',
+          path: '/hr/staff',
+          roles: ['admin', 'hr']
+        },
+        {
+          title: 'Staff Attendance',
+          path: '/hr/attendance',
+          roles: ['admin', 'hr', 'teacher', 'staff']
+        },
+        {
+          title: 'Leave Management',
+          path: '/hr/leave',
+          roles: ['admin', 'hr', 'teacher', 'staff']
+        },
+        {
+          title: 'Payroll',
+          path: '/hr/payroll',
+          roles: ['admin', 'hr', 'finance']
+        },
+        {
+          title: 'Performance Reviews',
+          path: '/hr/performance',
+          roles: ['admin', 'hr', 'principal', 'teacher', 'staff']
         }
       ]
     },

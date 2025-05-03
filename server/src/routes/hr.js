@@ -8,6 +8,7 @@ const leaveController = require('../controllers/hr/leaveController');
 const payrollController = require('../controllers/hr/payrollController');
 const recruitmentController = require('../controllers/hr/recruitmentController');
 const performanceController = require('../controllers/hr/performanceController');
+const attendanceController = require('../controllers/hr/attendanceController');
 
 // Staff Management Routes
 router.post('/staff',
@@ -36,14 +37,43 @@ router.delete('/staff/:staffId',
 );
 
 // Staff Attendance Routes
-router.get('/staff/:staffId/attendance',
-    authenticate,
-    staffController.getStaffAttendance
-);
-router.post('/staff/:staffId/attendance',
+router.get('/attendance',
     authenticate,
     checkRole(['admin', 'hr']),
-    staffController.markAttendance
+    attendanceController.getAllAttendance
+);
+router.get('/staff/:staffId/attendance',
+    authenticate,
+    attendanceController.getStaffAttendance
+);
+router.post('/attendance',
+    authenticate,
+    checkRole(['admin', 'hr']),
+    attendanceController.createAttendance
+);
+router.put('/attendance/:attendanceId',
+    authenticate,
+    checkRole(['admin', 'hr']),
+    attendanceController.updateAttendance
+);
+router.delete('/attendance/:attendanceId',
+    authenticate,
+    checkRole(['admin', 'hr']),
+    attendanceController.deleteAttendance
+);
+router.get('/attendance/summary',
+    authenticate,
+    attendanceController.getAttendanceSummary
+);
+router.post('/attendance/bulk',
+    authenticate,
+    checkRole(['admin', 'hr']),
+    attendanceController.bulkMarkAttendance
+);
+router.get('/attendance/working-hours',
+    authenticate,
+    checkRole(['admin', 'hr']),
+    attendanceController.getWorkingHoursSummary
 );
 
 // Leave Management Routes
