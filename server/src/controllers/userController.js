@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 const { pool } = require('../db');
+const auditLogger = require('../middleware/auditLogger');
 
 const userController = {
   // Create a new user
@@ -120,6 +121,12 @@ const userController = {
       });
 
       if (!user || !(await user.validatePassword(password))) {
+        // Log failed login attempt
+        if (user) {
+          await auditLogger.logAuthEvent(req, res, user.id, false, 'login');
+        } else {
+          await auditLogger.logAuthEvent(req, res, null, false, 'login');
+        }
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
@@ -128,6 +135,9 @@ const userController = {
         process.env.JWT_SECRET,
         { expiresIn: '24h' }
       );
+
+      // Log successful login
+      await auditLogger.logAuthEvent(req, res, user.id, true, 'login');
 
       res.json({
         token,
@@ -183,10 +193,16 @@ const userController = {
 
       const isValid = await user.validatePassword(currentPassword);
       if (!isValid) {
+        // Log failed password change
+        await auditLogger.logAuthEvent(req, res, user.id, false, 'password_change');
         return res.status(401).json({ error: 'Current password is incorrect' });
       }
 
       await user.update({ password_hash: newPassword });
+      
+      // Log successful password change
+      await auditLogger.logAuthEvent(req, res, user.id, true, 'password_change');
+      
       res.json({ message: 'Password updated successfully' });
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -206,10 +222,7 @@ const userController = {
       await user.update({ password_hash: newPassword });
       
       // Log the password reset action
-      await pool.query(
-        'INSERT INTO user_login_audit (user_id, ip_address, user_agent, success, action) VALUES ($1, $2, $3, $4, $5)',
-        [userId, req.ip, req.headers['user-agent'], true, 'password_reset']
-      );
+      await auditLogger.logAuthEvent(req, res, userId, true, 'password_reset');
       
       res.json({ message: 'Password reset successfully' });
     } catch (error) {

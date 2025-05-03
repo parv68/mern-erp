@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import ExamManagement from './components/admin/ExamManagement';
 import AssessmentManagement from './components/teacher/AssessmentManagement';
 import ExamResults from './components/student/ExamResults';
+import AuditLogs from './components/admin/AuditLogs';
 
 // Library Components
 import BookManagement from './components/library/BookManagement';
@@ -85,6 +86,16 @@ function App() {
       >
         <Route index element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
+        
+        {/* Admin Routes */}
+        <Route
+          path="admin/audit-logs"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <AuditLogs />
+            </RoleRoute>
+          }
+        />
         
         {/* Academic Management Routes */}
         <Route

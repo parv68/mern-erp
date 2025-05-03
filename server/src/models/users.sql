@@ -64,7 +64,8 @@ CREATE TABLE user_login_audit (
     login_timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ip_address VARCHAR(45),
     user_agent TEXT,
-    success BOOLEAN NOT NULL
+    success BOOLEAN NOT NULL,
+    action VARCHAR(50) DEFAULT 'login'
 );
 
 -- Default Roles
@@ -86,7 +87,9 @@ INSERT INTO permissions (name, description) VALUES
 -- General Permissions
 ('access:dashboard', 'Access dashboard'),
 ('update:profile', 'Update own profile'),
-('change:password', 'Change own password');
+('change:password', 'Change own password'),
+-- Audit Log Permissions
+('read:audit-logs', 'View audit logs');
 
 -- Assign permissions to admin role
 INSERT INTO role_permissions (role_id, permission_id) 
@@ -137,4 +140,7 @@ CREATE INDEX idx_role_permissions_role_id ON role_permissions(role_id);
 CREATE INDEX idx_role_permissions_permission_id ON role_permissions(permission_id);
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_is_active ON users(is_active); 
+CREATE INDEX idx_users_is_active ON users(is_active);
+CREATE INDEX idx_user_login_audit_user_id ON user_login_audit(user_id);
+CREATE INDEX idx_user_login_audit_login_timestamp ON user_login_audit(login_timestamp);
+CREATE INDEX idx_user_login_audit_action ON user_login_audit(action); 
