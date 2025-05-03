@@ -65,6 +65,18 @@ CREATE TABLE announcement_reads (
     CONSTRAINT unique_announcement_read UNIQUE (announcement_id, user_id)
 );
 
+-- Notifications Table
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) NOT NULL,
+    type VARCHAR(50) NOT NULL CHECK (type IN ('message', 'announcement', 'newsletter')),
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    reference_id INTEGER NOT NULL,
+    read_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Indexes
 CREATE INDEX idx_announcements_type ON announcements(type);
 CREATE INDEX idx_announcements_target_class ON announcements(target_class);
@@ -74,6 +86,9 @@ CREATE INDEX idx_newsletters_status ON newsletters(status);
 CREATE INDEX idx_newsletters_schedule ON newsletters(schedule_date);
 CREATE INDEX idx_newsletter_recipients_newsletter ON newsletter_recipients(newsletter_id);
 CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcement_id);
+CREATE INDEX idx_notifications_user ON notifications(user_id);
+CREATE INDEX idx_notifications_type ON notifications(type);
+CREATE INDEX idx_notifications_read_status ON notifications(read_at);
 
 -- Triggers
 CREATE OR REPLACE FUNCTION update_updated_at_column()
