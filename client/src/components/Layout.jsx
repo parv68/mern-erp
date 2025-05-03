@@ -12,6 +12,9 @@ import {
   UserGroupIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
+  SpeakerWaveIcon,
+  EnvelopeIcon,
+  ChatBubbleLeftIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
 
@@ -34,6 +37,8 @@ const getNavigationItems = (userRole) => {
       { name: 'Fee Management', href: '/finance/fees', icon: BanknotesIcon },
       { name: 'Salary Management', href: '/finance/salary', icon: BanknotesIcon },
       { name: 'Financial Reports', href: '/finance/reports', icon: ClipboardDocumentListIcon },
+      { name: 'Announcements', href: '/communication/announcements', icon: SpeakerWaveIcon },
+      { name: 'Newsletter', href: '/communication/newsletter', icon: EnvelopeIcon },
       { name: 'Exams', href: '/exams/manage', icon: ClipboardDocumentListIcon },
     ],
     accountant: [
@@ -54,6 +59,8 @@ const getNavigationItems = (userRole) => {
       { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
       { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
       { name: 'Finance', href: '/finance/teacher', icon: BanknotesIcon },
+      { name: 'Announcements', href: '/communication/announcements', icon: SpeakerWaveIcon },
+      { name: 'Messages', href: '/communication/messaging', icon: ChatBubbleLeftIcon },
     ],
     student: [
       { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
@@ -62,6 +69,8 @@ const getNavigationItems = (userRole) => {
       { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
       { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
       { name: 'Fees', href: '/finance/student', icon: BanknotesIcon },
+      { name: 'Announcements', href: '/communication/announcements', icon: SpeakerWaveIcon },
+      { name: 'Messages', href: '/communication/messaging', icon: ChatBubbleLeftIcon },
     ],
   };
 

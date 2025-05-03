@@ -32,6 +32,11 @@ import TeacherFinance from './components/financial/TeacherFinance';
 import StudentFees from './components/financial/StudentFees';
 import FinancialReports from './components/financial/FinancialReports';
 
+// Communication Components
+import Announcements from './components/communication/Announcements';
+import Messaging from './components/communication/Messaging';
+import Newsletter from './components/communication/Newsletter';
+
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -243,6 +248,28 @@ function App() {
           element={
             <RoleRoute allowedRoles={['student', 'parent']}>
               <StudentFees />
+            </RoleRoute>
+          }
+        />
+
+        {/* Communication Routes */}
+        <Route
+          path="communication/announcements"
+          element={<Announcements />}
+        />
+        <Route
+          path="communication/messaging"
+          element={
+            <RoleRoute allowedRoles={['teacher', 'student', 'parent']}>
+              <Messaging />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="communication/newsletter"
+          element={
+            <RoleRoute allowedRoles={['admin']}>
+              <Newsletter />
             </RoleRoute>
           }
         />
