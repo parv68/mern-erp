@@ -25,6 +25,13 @@ import BookSearch from './components/library/BookSearch';
 import MyBooks from './components/library/MyBooks';
 import LibraryReports from './components/library/LibraryReports';
 
+// Financial Components
+import FeeManagement from './components/financial/FeeManagement';
+import SalaryManagement from './components/financial/SalaryManagement';
+import TeacherFinance from './components/financial/TeacherFinance';
+import StudentFees from './components/financial/StudentFees';
+import FinancialReports from './components/financial/FinancialReports';
+
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -194,6 +201,48 @@ function App() {
           element={
             <RoleRoute allowedRoles={['student', 'parent']}>
               <ExamResults />
+            </RoleRoute>
+          }
+        />
+
+        {/* Financial Management Routes */}
+        <Route
+          path="finance/fees"
+          element={
+            <RoleRoute allowedRoles={['admin', 'accountant']}>
+              <FeeManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="finance/salary"
+          element={
+            <RoleRoute allowedRoles={['admin', 'accountant']}>
+              <SalaryManagement />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="finance/reports"
+          element={
+            <RoleRoute allowedRoles={['admin', 'accountant']}>
+              <FinancialReports />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="finance/teacher"
+          element={
+            <RoleRoute allowedRoles={['teacher']}>
+              <TeacherFinance />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="finance/student"
+          element={
+            <RoleRoute allowedRoles={['student', 'parent']}>
+              <StudentFees />
             </RoleRoute>
           }
         />

@@ -31,8 +31,15 @@ const getNavigationItems = (userRole) => {
       { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
       { name: 'Students', href: '/students/admission', icon: UserGroupIcon },
       { name: 'Attendance', href: '/students/attendance', icon: ClipboardDocumentListIcon },
-      { name: 'Finance', href: '/finance', icon: BanknotesIcon },
+      { name: 'Fee Management', href: '/finance/fees', icon: BanknotesIcon },
+      { name: 'Salary Management', href: '/finance/salary', icon: BanknotesIcon },
+      { name: 'Financial Reports', href: '/finance/reports', icon: ClipboardDocumentListIcon },
       { name: 'Exams', href: '/exams/manage', icon: ClipboardDocumentListIcon },
+    ],
+    accountant: [
+      { name: 'Fee Management', href: '/finance/fees', icon: BanknotesIcon },
+      { name: 'Salary Management', href: '/finance/salary', icon: BanknotesIcon },
+      { name: 'Financial Reports', href: '/finance/reports', icon: ClipboardDocumentListIcon },
     ],
     librarian: [
       { name: 'Book Management', href: '/library/books', icon: BookOpenIcon },
@@ -46,6 +53,7 @@ const getNavigationItems = (userRole) => {
       { name: 'Assessments', href: '/exams/assessments', icon: ClipboardDocumentListIcon },
       { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
       { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
+      { name: 'Finance', href: '/finance/teacher', icon: BanknotesIcon },
     ],
     student: [
       { name: 'Timetable', href: '/academic/timetable', icon: CalendarIcon },
@@ -53,6 +61,7 @@ const getNavigationItems = (userRole) => {
       { name: 'Results', href: '/exams/results', icon: ClipboardDocumentListIcon },
       { name: 'Library', href: '/library/search', icon: BuildingLibraryIcon },
       { name: 'My Books', href: '/library/my-books', icon: BookOpenIcon },
+      { name: 'Fees', href: '/finance/student', icon: BanknotesIcon },
     ],
   };
 
